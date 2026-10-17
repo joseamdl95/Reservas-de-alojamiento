@@ -1,0 +1,17 @@
+# Dependencias de Composer
+/vendor/
+
+# Configuración con credenciales
+/config.php
+/.env
+
+# Logs
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
