@@ -27,7 +27,7 @@ DROP TABLE IF EXISTS `reserva`;
 CREATE TABLE `reserva` (
   `id` bigint(20) unsigned NOT NULL,
   `nombre_huesped` varchar(100) NOT NULL,
-  `email_huesped` varchar(150) NOT NULL,
+  `email_huesped` varchar(254) NOT NULL,
   `nombre_alojamiento` varchar(150) NOT NULL,
   `fecha_entrada` date NOT NULL,
   `fecha_salida` date NOT NULL,
