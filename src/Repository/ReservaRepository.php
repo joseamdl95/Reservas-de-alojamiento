@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Database;
 use App\Model\Reserva;
 use PDO;
+use Throwable;
 
 class ReservaRepository
 {
@@ -74,5 +75,81 @@ class ReservaRepository
         $stmt->execute([$id]);
         $resultado =  $stmt->fetch(PDO::FETCH_ASSOC);
         return $resultado === false ? null : $resultado;
+    }
+
+    public function create(Reserva $reserva): int
+    {
+        $this->pdo->beginTransaction();
+
+        try {
+            $sql = "INSERT INTO reserva (nombre_huesped, email_huesped, nombre_alojamiento,fecha_entrada, fecha_salida, estado, importe, notas) VALUES (?,?,?,?,?,?,?,?)";
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([
+                $reserva->nombre_huesped,
+                $reserva->email_huesped,
+                $reserva->nombre_alojamiento,
+                $reserva->fecha_entrada,
+                $reserva->fecha_salida,
+                $reserva->estado,
+                $reserva->importe,
+                $reserva->notas,
+            ]);
+
+            $id = (int) $this->pdo->lastInsertId();
+
+            $this->addEvento($id, 'creada', 'Reserva creada');
+
+            $this->pdo->commit();
+            return $id;
+        } catch (Throwable $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
+    }
+
+    public function updateEstado(int $id, string $estado): string
+    {
+        $actual = $this->findById($id);
+
+        if ($actual === null) {
+            return 'not_found';
+        }
+
+        if ($actual['estado'] === $estado) {
+            return 'unchanged';
+        }
+
+        $this->pdo->beginTransaction();
+
+        try {
+            $sql = "UPDATE reserva SET estado = ? WHERE id = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$estado, $id]);
+
+            $this->addEvento($id, $estado, "Estado cambiado a {$estado}");
+
+            $this->pdo->commit();
+            return 'updated';
+        } catch (Throwable $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
+    }
+
+    private function addEvento(int $reservaId, string $tipo, string $descripcion): void
+    {
+        $sql = "INSERT INTO reserva_evento (reserva_id, tipo, descripcion) VALUES (?, ?, ?)";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$reservaId, $tipo, $descripcion]);
+    }
+
+    public function findEventosByReserva(int $id): array
+    {
+        $sql = "SELECT * FROM reserva_evento WHERE reserva_id = ? ORDER BY fecha_creacion ASC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
