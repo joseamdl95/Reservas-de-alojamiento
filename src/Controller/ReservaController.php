@@ -76,4 +76,60 @@ class ReservaController
         header('Content-Type: application/json');
         echo json_encode(['id' => $id, 'message' => 'Reserva creada']);
     }
+
+    public function updateEstado(int $id): void
+    {
+        $body = file_get_contents('php://input');
+        $data = json_decode($body, true);
+
+        if (!is_array($data)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'JSON inválido']);
+            return;
+        }
+
+        if (empty($data['estado'])) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Falta el campo estado']);
+            return;
+        }
+
+        $estadosValidos = ['pendiente', 'confirmada', 'cancelada'];
+        if (!in_array($data['estado'], $estadosValidos, true)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Estado inválido']);
+            return;
+        }
+
+        $resultado = $this->repository->updateEstado($id, $data['estado']);
+
+        switch ($resultado) {
+            case 'not_found':
+                http_response_code(404);
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'Reserva no encontrada']);
+                break;
+
+            case 'unchanged':
+                http_response_code(200);
+                header('Content-Type: application/json');
+                echo json_encode(['message' => 'El estado ya era el mismo']);
+                break;
+
+            case 'updated':
+                http_response_code(200);
+                header('Content-Type: application/json');
+                echo json_encode(['message' => 'Estado actualizado', 'estado' => $data['estado']]);
+                break;
+
+            default:
+                http_response_code(500);
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'Estado inesperado del repositorio']);
+                break;
+        }
+    }
 }

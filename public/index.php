@@ -41,6 +41,13 @@ try {
         return;
     }
 
+    //Cambiar estado de reserva
+    if ($metodo === 'PATCH' && preg_match('#^/api/reservas/(\d+)/estado$#', $uri, $matches)) {
+        $id = (int) $matches[1];
+        $controller->updateEstado($id);
+        return;
+    }
+
     //Ruta no encontrada
     http_response_code(404);
     header('Content-Type: application/json');
