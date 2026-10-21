@@ -22,14 +22,22 @@ try {
 
     $controller = new ReservaController();
 
+    //listar reservas
     if ($metodo === 'GET' && $uri === '/api/reservas') {
         $controller->index();
         return;
     }
 
+    //buscar reserva por id
     if ($metodo === 'GET' && preg_match('#^/api/reservas/(\d+)$#', $uri, $matches)) {
         $id = (int) $matches[1];
         $controller->show($id);
+        return;
+    }
+
+    //Crear reserva
+    if ($metodo === 'POST' && $uri === '/api/reservas') {
+        $controller->store();
         return;
     }
 

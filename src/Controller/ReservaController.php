@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\ReservaRepository;
+use App\Model\Reserva;
 
 class ReservaController
 {
@@ -45,5 +46,34 @@ class ReservaController
         http_response_code(200);
         header('Content-Type: application/json');
         echo json_encode($reserva);
+    }
+
+    public function store(): void
+    {
+
+        $body = file_get_contents('php://input');
+        $data = json_decode($body, true);
+
+        if (!is_array($data)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'JSON inválido']);
+            return;
+        }
+
+        $errores = Reserva::validate($data);
+        if (!empty($errores)) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            echo json_encode(['errors' => $errores]);
+            return;
+        }
+
+        $reserva = new Reserva($data);
+        $id = $this->repository->create($reserva);
+
+        http_response_code(201);
+        header('Content-Type: application/json');
+        echo json_encode(['id' => $id, 'message' => 'Reserva creada']);
     }
 }
