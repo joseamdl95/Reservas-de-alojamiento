@@ -8,6 +8,8 @@ error_reporting(E_ALL);
 require __DIR__ . '/../vendor/autoload.php';
 
 use App\Controller\ReservaController;
+use App\Repository\ReservaRepository;
+use App\TwigFactory;
 
 //Capturar cualquier excepción no controlada → 500
 try {
@@ -17,6 +19,46 @@ try {
     $metodo = $_SERVER['REQUEST_METHOD'];
 
     $controller = new ReservaController();
+
+    // ─────────────────────────────────────────────
+    // VISTAS (HTML con Twig)
+    // ─────────────────────────────────────────────
+
+    // Vista: listado de reservas
+    if ($metodo === 'GET' && $uri === '/') {
+        $repo = new ReservaRepository();
+        $reservas = $repo->findAll();
+
+        $twig = TwigFactory::getTwig();
+        echo $twig->render('lista_reservas.html.twig', ['reservas' => $reservas]);
+        return;
+    }
+
+    // Vista: detalle de reserva
+    if ($metodo === 'GET' && preg_match('#^/reserva/(\d+)$#', $uri, $matches)) {
+        $id = (int) $matches[1];
+        $repo = new ReservaRepository();
+        $reserva = $repo->findById($id);
+
+        if ($reserva === null) {
+            http_response_code(404);
+            echo "Reserva no encontrada";
+            return;
+        }
+
+        $eventos = $repo->findEventosByReserva($id);
+
+        $twig = TwigFactory::getTwig();
+        echo $twig->render('detalle_reserva.html.twig', [
+            'reserva' => $reserva,
+            'eventos' => $eventos,
+        ]);
+        return;
+    }
+
+    // ─────────────────────────────────────────────
+    // API (JSON)
+    // ─────────────────────────────────────────────
 
     //listar reservas
     if ($metodo === 'GET' && $uri === '/api/reservas') {
