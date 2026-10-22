@@ -1,0 +1,40 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Listado de Reservas{% endblock %}
+
+{% block content %}
+    <h2>Reservas</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Huésped</th>
+                <th>Alojamiento</th>
+                <th>Entrada</th>
+                <th>Salida</th>
+                <th>Estado</th>
+                <th>Importe</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reserva in reservas %}
+                <tr>
+                    <td>{{ reserva.nombre_huesped }}</td>
+                    <td>{{ reserva.nombre_alojamiento }}</td>
+                    <td>{{ reserva.fecha_entrada|date("d/m/Y") }}</td>
+                    <td>{{ reserva.fecha_salida|date("d/m/Y") }}</td>
+                    <td>{{ reserva.estado|capitalize }}</td>
+                    <td>{{ reserva.importe|number_format(2, ',', '.') }} €</td>
+                    <td>
+                        <a href="/reserva/{{ reserva.id }}">Ver</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">No hay reservas que mostrar.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
