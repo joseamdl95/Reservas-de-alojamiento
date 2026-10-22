@@ -1,0 +1,62 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Reserva #{{ reserva.id }} - {{ reserva.nombre_huesped }}{% endblock %}
+
+{% block content %}
+    <h2>Reserva #{{ reserva.id }}</h2>
+
+    <p><a href="/">← Volver al listado</a></p>
+
+    <dl>
+        <dt>Huésped</dt>
+        <dd>{{ reserva.nombre_huesped }}</dd>
+
+        <dt>Email</dt>
+        <dd>{{ reserva.email_huesped }}</dd>
+
+        <dt>Alojamiento</dt>
+        <dd>{{ reserva.nombre_alojamiento }}</dd>
+
+        <dt>Entrada</dt>
+        <dd>{{ reserva.fecha_entrada|date("d/m/Y") }}</dd>
+
+        <dt>Salida</dt>
+        <dd>{{ reserva.fecha_salida|date("d/m/Y") }}</dd>
+
+        <dt>Importe</dt>
+        <dd>{{ reserva.importe|number_format(2, ',', '.') }} €</dd>
+
+        <dt>Estado</dt>
+        <dd class="estado estado-{{ reserva.estado }}">
+            {{ reserva.estado|capitalize }}
+        </dd>
+
+        {% if reserva.notas %}
+            <dt>Notas</dt>
+            <dd>{{ reserva.notas }}</dd>
+        {% endif %}
+    </dl>
+
+    <h3>Acciones</h3>
+    {% if reserva.estado != 'cancelada' %}
+        <button id="btn-cancelar" data-id="{{ reserva.id }}">Cancelar reserva</button>
+    {% endif %}
+    {% if reserva.estado == 'pendiente' %}
+        <button id="btn-confirmar" data-id="{{ reserva.id }}">Confirmar reserva</button>
+    {% endif %}
+
+    <h3>Historial</h3>
+    {% if eventos is empty %}
+        <p>No hay eventos registrados.</p>
+    {% else %}
+        <ul class="timeline">
+            {% for evento in eventos %}
+                <li>
+                    <strong>{{ evento.tipo|capitalize }}</strong>
+                    <span class="fecha">{{ evento.fecha_creacion|date("d/m/Y H:i") }}</span>
+                    <p>{{ evento.descripcion }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
