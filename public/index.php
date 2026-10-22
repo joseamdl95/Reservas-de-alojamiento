@@ -5,11 +5,7 @@ declare(strict_types=1);
 ini_set('display_errors', '1');
 error_reporting(E_ALL);
 
-//Cargar clases (a mano, mientras no usemos Composer)
-require __DIR__ . '/../src/Database.php';
-require __DIR__ . '/../src/Model/Reserva.php';
-require __DIR__ . '/../src/Repository/ReservaRepository.php';
-require __DIR__ . '/../src/Controller/ReservaController.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use App\Controller\ReservaController;
 
