@@ -1,0 +1,54 @@
+{#
+    Formulario reutilizable para crear y (en el futuro) editar reservas.
+
+    Variables esperadas:
+    - reserva (opcional): array con datos de una reserva existente.
+      Si no se pasa, el formulario se comporta como "crear" (campos vacíos).
+      Si se pasa, los campos se rellenan con los valores actuales.
+#}
+<form id="form-reserva" data-modo="{{ reserva is defined and reserva ? 'editar' : 'crear' }}">
+    {% if reserva is defined and reserva %}
+        <input type="hidden" name="id" value="{{ reserva.id }}">
+    {% endif %}
+
+    <div id="errores-form"></div>
+
+    <label>Huésped:
+        <input type="text" name="nombre_huesped" required
+               value="{{ reserva.nombre_huesped|default('') }}">
+    </label>
+
+    <label>Email:
+        <input type="email" name="email_huesped" required
+               value="{{ reserva.email_huesped|default('') }}">
+    </label>
+
+    <label>Alojamiento:
+        <input type="text" name="nombre_alojamiento" required
+               value="{{ reserva.nombre_alojamiento|default('') }}">
+    </label>
+
+    <label>Entrada:
+        <input type="date" name="fecha_entrada" required
+               value="{{ reserva.fecha_entrada|default('') }}">
+    </label>
+
+    <label>Salida:
+        <input type="date" name="fecha_salida" required
+               value="{{ reserva.fecha_salida|default('') }}">
+    </label>
+
+    <label>Importe:
+        <input type="number" name="importe" step="0.01" min="0" required
+               value="{{ reserva.importe|default('') }}">
+    </label>
+
+    <label>Notas:
+        <textarea name="notas">{{ reserva.notas|default('') }}</textarea>
+    </label>
+
+    <button type="submit">
+        {{ reserva is defined and reserva ? 'Guardar cambios' : 'Crear reserva' }}
+    </button>
+    <button type="button" id="btn-cerrar-form">cerrar</button>
+</form>

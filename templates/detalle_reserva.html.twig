@@ -45,6 +45,11 @@
         <button id="btn-confirmar" data-id="{{ reserva.id }}">Confirmar reserva</button>
     {% endif %}
 
+    {#
+    <h3>Editar reserva #{{ reserva.id }}</h3>
+    {% include 'partials/form_reserva.html.twig' with {'reserva': reserva} only %}
+    #}
+
     <h3>Historial</h3>
     {% if eventos is empty %}
         <p>No hay eventos registrados.</p>
