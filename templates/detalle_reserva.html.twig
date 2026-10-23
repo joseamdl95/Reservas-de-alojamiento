@@ -26,6 +26,7 @@
         <dt>Importe</dt>
         <dd>{{ reserva.importe|number_format(2, ',', '.') }} €</dd>
 
+        <dt>Estado</dt>
         <dd id="estado-valor" class="estado estado-{{ reserva.estado }}">
             {{ reserva.estado|capitalize }}
         </dd>
