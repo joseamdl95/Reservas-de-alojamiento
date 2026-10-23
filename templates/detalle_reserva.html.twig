@@ -26,8 +26,7 @@
         <dt>Importe</dt>
         <dd>{{ reserva.importe|number_format(2, ',', '.') }} €</dd>
 
-        <dt>Estado</dt>
-        <dd class="estado estado-{{ reserva.estado }}">
+        <dd id="estado-valor" class="estado estado-{{ reserva.estado }}">
             {{ reserva.estado|capitalize }}
         </dd>
 
@@ -38,12 +37,14 @@
     </dl>
 
     <h3>Acciones</h3>
-    {% if reserva.estado != 'cancelada' %}
-        <button id="btn-cancelar" data-id="{{ reserva.id }}">Cancelar reserva</button>
-    {% endif %}
-    {% if reserva.estado == 'pendiente' %}
-        <button id="btn-confirmar" data-id="{{ reserva.id }}">Confirmar reserva</button>
-    {% endif %}
+    <div id="acciones-estado" data-reserva-id="{{ reserva.id }}">
+        {% if reserva.estado != 'cancelada' %}
+            <button id="btn-cancelar">Cancelar reserva</button>
+        {% endif %}
+        {% if reserva.estado == 'pendiente' %}
+            <button id="btn-confirmar">Confirmar reserva</button>
+        {% endif %}
+    </div>
 
     {#
     <h3>Editar reserva #{{ reserva.id }}</h3>

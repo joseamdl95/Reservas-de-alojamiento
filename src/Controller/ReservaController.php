@@ -132,4 +132,22 @@ class ReservaController
                 break;
         }
     }
+
+    public function eventos(int $id): void
+    {
+        $reserva = $this->repository->findById($id);
+
+        if ($reserva === null) {
+            http_response_code(404);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Reserva no encontrada']);
+            return;
+        }
+
+        $eventos = $this->repository->findEventosByReserva($id);
+
+        http_response_code(200);
+        header('Content-Type: application/json');
+        echo json_encode($eventos);
+    }
 }

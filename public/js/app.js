@@ -125,6 +125,140 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    const accionesEstado = document.getElementById('acciones-estado');
+    const estadoValor = document.getElementById('estado-valor');
+
+    if (accionesEstado && estadoValor) {
+        const reservaId = accionesEstado.dataset.reservaId;
+
+        accionesEstado.addEventListener('click', async (e) => {
+            const boton = e.target.closest('button');
+            if (!boton) return;
+
+            let nuevoEstado = null;
+            let mensaje = '';
+
+            if (boton.id === 'btn-cancelar') {
+                nuevoEstado = 'cancelada';
+                mensaje = '¿Seguro que quieres cancelar esta reserva?';
+            } else if (boton.id === 'btn-confirmar') {
+                nuevoEstado = 'confirmada';
+                mensaje = '¿Confirmar esta reserva?';
+            } else {
+                return;
+            }
+
+            if (!confirm(mensaje)) return;
+
+            await cambiarEstado(reservaId, nuevoEstado, boton);
+        });
+    }
+
+   async function cambiarEstado(id, nuevoEstado, boton) {
+    const textoOriginal = boton.textContent;
+    boton.disabled = true;
+    boton.textContent = 'Procesando...';
+
+    try {
+        const respuesta = await fetch(`/api/reservas/${id}/estado`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ estado: nuevoEstado }),
+        });
+
+        if (respuesta.ok) {
+            const data = await respuesta.json();
+            actualizarEstadoUI(nuevoEstado);
+            await recargarTimeline(id);
+
+            if (data.message && data.message.includes('ya era')) {
+                alert('El estado ya era el mismo');
+            }
+            return;
+        }
+
+        if (respuesta.status === 404) {
+            alert('La reserva ya no existe. Recargando...');
+            window.location.reload();
+            return;
+        }
+
+        const errorData = await respuesta.json();
+        alert('Error: ' + (errorData.error || 'No se pudo cambiar el estado'));
+        boton.disabled = false;
+        boton.textContent = textoOriginal;
+    } catch (err) {
+        alert('Error de conexión: ' + err.message);
+        boton.disabled = false;
+        boton.textContent = textoOriginal;
+    }
+}
+
+    function actualizarEstadoUI(nuevoEstado) {
+        estadoValor.textContent = capitalizar(nuevoEstado);
+        estadoValor.className = 'estado estado-' + nuevoEstado;
+
+        accionesEstado.innerHTML = '';
+
+        if (nuevoEstado !== 'cancelada') {
+            const btnCancelar = document.createElement('button');
+            btnCancelar.id = 'btn-cancelar';
+            btnCancelar.textContent = 'Cancelar reserva';
+            accionesEstado.appendChild(btnCancelar);
+        }
+
+        if (nuevoEstado === 'pendiente') {
+            const btnConfirmar = document.createElement('button');
+            btnConfirmar.id = 'btn-confirmar';
+            btnConfirmar.textContent = 'Confirmar reserva';
+            accionesEstado.appendChild(btnConfirmar);
+        }
+
+    }
+
+    async function recargarTimeline(id) {
+        const respuesta = await fetch(`/api/reservas/${id}/eventos`);
+        if (!respuesta.ok) return;
+
+        const eventos = await respuesta.json();
+        const contenedorTimeline = document.querySelector('.timeline');
+
+        if (!contenedorTimeline) {
+            // No existía timeline (reserva sin eventos). Lo creamos.
+            const h3Historial = Array.from(document.querySelectorAll('h3'))
+                .find(h => h.textContent.trim() === 'Historial');
+            if (!h3Historial) return;
+
+            const ul = document.createElement('ul');
+            ul.className = 'timeline';
+            h3Historial.parentNode.insertBefore(ul, h3Historial.nextSibling);
+            ul.innerHTML = construirItemsTimeline(eventos);
+            return;
+        }
+
+        contenedorTimeline.innerHTML = construirItemsTimeline(eventos);
+    }
+
+    function construirItemsTimeline(eventos) {
+        if (eventos.length === 0) return '';
+
+        return eventos.map(ev => `
+            <li>
+                <strong>${capitalizar(ev.tipo)}</strong>
+                <span class="fecha">${formatearFechaHora(ev.fecha_creacion)}</span>
+                <p>${escaparHtml(ev.descripcion || '')}</p>
+            </li>
+        `).join('');
+    }
+
+    function formatearFechaHora(fechaISO) {
+        // '2026-10-23 15:04:00' → '23/10/2026 15:04'
+        const [fecha, hora] = fechaISO.split(' ');
+        const [anio, mes, dia] = fecha.split('-');
+        const [h, m] = hora.split(':');
+        return `${dia}/${mes}/${anio} ${h}:${m}`;
+    }
+
     
     function renderizarTabla(reservas) {
         if (reservas.length === 0) {

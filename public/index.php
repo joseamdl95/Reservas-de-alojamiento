@@ -86,6 +86,13 @@ try {
         return;
     }
 
+    //Eventos de una reserva
+    if ($metodo === 'GET' && preg_match('#^/api/reservas/(\d+)/eventos$#', $uri, $matches)) {
+        $id = (int) $matches[1];
+        $controller->eventos($id);
+        return;
+    }
+
     //Ruta no encontrada
     http_response_code(404);
     header('Content-Type: application/json');
