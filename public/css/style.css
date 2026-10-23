@@ -210,7 +210,7 @@ dd { color: #111827; }
 /* ─── Estados ─── */
 .estado {
     display: inline-block;
-    width: fit-content;
+    
     padding: 0.2rem 0.6rem;
     border-radius: 9999px;
     font-size: 0.8rem;
