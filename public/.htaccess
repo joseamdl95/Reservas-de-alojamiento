@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Seguridad: bloquear acceso a carpetas internas
+RedirectMatch 404 /(src|templates|config|vendor|sql)/
+
+# Redirigir todo lo que no sea un archivo real a index.php (Front Controller)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]

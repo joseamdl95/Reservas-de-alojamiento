@@ -51,6 +51,22 @@ Prueba técnica para la gestión de reservas de alojamiento. Aplicación web con
 
     - API: http://localhost:8000/api/reservas
 
+## 🌐 Despliegue en Producción (Apache)
+
+El proyecto está diseñado para funcionar tanto con el servidor embebido de PHP (`php -S`) como con servidores tradicionales como Apache (XAMPP, InfinityFree, etc.).
+
+Para desplegar en un servidor Apache, es necesario incluir un archivo `.htaccess` en la carpeta pública (`public/` o `htdocs/`) con las siguientes reglas:
+
+```apache
+RewriteEngine On
+# Seguridad: bloquear acceso a carpetas internas
+RedirectMatch 404 /(src|templates|config|vendor|sql)/
+# Redirigir peticiones a index.php (Front Controller)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+```
+
 ## Estructura del proyecto
 
 ```text
