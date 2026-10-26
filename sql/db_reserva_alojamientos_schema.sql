@@ -34,9 +34,9 @@ CREATE TABLE `reserva` (
   `estado` enum('pendiente','confirmada','cancelada') NOT NULL DEFAULT 'pendiente',
   `importe` decimal(10,2) NOT NULL,
   `notas` text DEFAULT NULL,
-  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,7 +45,7 @@ CREATE TABLE `reserva` (
 
 LOCK TABLES `reserva` WRITE;
 /*!40000 ALTER TABLE `reserva` DISABLE KEYS */;
-INSERT INTO `reserva` VALUES (1,'Juan Pérez','juan@example.com','Hotel Central','2026-11-01','2026-11-05','confirmada',350.50,'Cerca del centro','2026-10-18 17:48:38'),(2,'María García','maria@example.com','Apartamento Playa','2026-12-10','2026-12-15','pendiente',500.00,NULL,'2026-10-18 17:48:38'),(3,'Pedro López','pedro@example.com','Casa Rural','2026-10-20','2026-10-22','cancelada',180.00,'Canceló por lluvia','2026-10-18 17:48:38'),(4,'Ana Torres','ana@example.com','Hotel Sol','2027-01-10','2027-01-15','cancelada',420.00,NULL,'2026-10-19 13:10:05');
+INSERT INTO `reserva` VALUES (1,'Lucía Fernández','lucia.fernandez@email.com','Hotel Ritz Madrid','2026-11-10','2026-11-15','confirmada',1250.00,'Habitación doble con vistas al Paseo del Prado','2026-10-01 08:00:00'),(2,'Javier Gómez','javier.gomez@email.com','Apartamentos Sierra Nevada','2026-12-20','2026-12-27','pendiente',850.50,'Cerca de las pistas de esquí','2026-10-15 16:30:00'),(3,'Carmen López','carmen.lopez@email.com','Parador de Cádiz','2026-10-05','2026-10-10','cancelada',980.00,'Canceló por motivos personales','2026-09-20 07:15:00'),(4,'Alejandro Ruiz','alejandro.ruiz@email.com','Casa Rural El Olivo','2027-01-15','2027-01-18','confirmada',320.00,'Solicita cuna para bebé','2026-10-20 12:45:00'),(5,'Elena Martín','elena.martin@email.com','Hotel Bahía Príncipe','2027-02-01','2027-02-08','pendiente',1560.00,'Todo incluido','2026-10-25 10:20:00');
 /*!40000 ALTER TABLE `reserva` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -61,11 +61,11 @@ CREATE TABLE `reserva_evento` (
   `reserva_id` bigint(20) unsigned NOT NULL,
   `tipo` varchar(50) NOT NULL,
   `descripcion` text DEFAULT NULL,
-  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `idx_reserva_evento_reserva_id` (`reserva_id`),
   CONSTRAINT `fk_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `reserva` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -74,7 +74,7 @@ CREATE TABLE `reserva_evento` (
 
 LOCK TABLES `reserva_evento` WRITE;
 /*!40000 ALTER TABLE `reserva_evento` DISABLE KEYS */;
-INSERT INTO `reserva_evento` VALUES (1,4,'creada','Reserva creada','2026-10-19 13:10:05'),(2,4,'confirmada','Estado cambiado a confirmada','2026-10-19 13:10:05'),(3,4,'cancelada','Estado cambiado a cancelada','2026-10-19 13:10:05');
+INSERT INTO `reserva_evento` VALUES (1,1,'creada','Reserva creada','2026-10-01 08:00:00'),(2,1,'confirmada','Estado cambiado a confirmada','2026-10-02 07:30:00'),(3,2,'creada','Reserva creada','2026-10-15 16:30:00'),(4,3,'creada','Reserva creada','2026-09-20 07:15:00'),(5,3,'cancelada','Estado cambiado a cancelada','2026-09-25 14:00:00'),(6,4,'creada','Reserva creada','2026-10-20 12:45:00'),(7,4,'confirmada','Estado cambiado a confirmada','2026-10-21 08:00:00'),(8,5,'creada','Reserva creada','2026-10-25 10:20:00');
 /*!40000 ALTER TABLE `reserva_evento` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -87,4 +87,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-19 15:14:39
+-- Dump completed on 2026-10-26 15:42:21
