@@ -33,7 +33,7 @@ Prueba técnica para la gestión de reservas de alojamiento. Aplicación web con
 
     - Abre phpMyAdmin (http://localhost/phpmyadmin).
     - Importa el archivo sql/db_reserva_alojamientos_schema.sql.
-    -  Esto creará la base de datos db_reserva_alojamientos con las tablas reserva y reserva_evento, además de algunos datos de ejemplo.
+    - Esto creará la base de datos db_reserva_alojamientos con las tablas reserva y reserva_evento, además de algunos datos de ejemplo.
 
 4. **Configurar credenciales**:
 
@@ -81,7 +81,8 @@ Prueba técnica para la gestión de reservas de alojamiento. Aplicación web con
 └── composer.json
 ```
 ## API endpoints
-```| Método | Ruta | Descripción |
+```
+| Método | Ruta | Descripción |
 |---|---|---|
 | `GET` | `/api/reservas` | Lista reservas (filtros: `estado`, `nombre_huesped`, `nombre_alojamiento`, `fecha_desde`, `fecha_hasta`) |
 | `GET` | `/api/reservas/{id}` | Detalle de una reserva |
